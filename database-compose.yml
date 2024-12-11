@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: app-mariadb
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: admin01
+        MYSQL_DATABASE: travelLaravel
+    volumes:
+      - /source/mariadb:/var/lib/mysql
+    ports:
+        - "3307:3306"
+
+#  phpmyadmin:
+#    image: phpmyadmin
+#    container_name: app-phpmyadmin
+#    ports:
+#      - "8080:80"
+#    environment:
+#      PMA_HOST: app-mariadb
+#      MYSQL_ROOT_PASSWORD: admin01
+#    depends_on:
+#      - mariadb
+
+  mongodb:
+    image: mongo
+    container_name: app-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: minmin
+      MONGO_INITDB_DATABASE: travelLaravel
+    volumes:
+      - /source/mongo:/data/mongo
+
+#  mongo-express:
+#    image: mongo-express
+#    container_name: app-mongoExpress
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      ME_CONFIG_MONGODB_SERVER: mongodb
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: 123456
+#      ME_CONFIG_MONGODB_URL: mongodb://root:minmin@mongo:27017/
+#      ME_CONFIG_BASICAUTH: false
+#      ME_CONFIG_BASICAUTH_USERNAME: admin
+#      ME_CONFIG_BASICAUTH_PASSWORD: minmin
