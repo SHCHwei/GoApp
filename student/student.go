@@ -1,4 +1,4 @@
-package member
+package student
 
 import(
     "github.com/gin-gonic/gin"
@@ -7,28 +7,27 @@ import(
     db "GoApp/database"
 )
 
-type Member struct{
+type Student struct{
     Id int `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
     Account string `gorm:"column:account" json:"account"`
-    FirstName string `gorm:"column:firstName" json:"firstName"`
-    LastName string `gorm:"column:lastName" json:"lastName"`
+    PW string `gorm:"column:password" json:"password"`
+    StudentName string `gorm:"column:studentName" json:"studentName"`
     Email string `gorm:"column:email;index" json:"email"`
     Phone string `gorm:"column:phone" json:"phone"`
-    PW string `gorm:"column:password" json:"password"`
-    MType string `gorm:"column:memberType" json:"memberType"`
 }
 
-var MemberInfo Member
+var StudentInfo Student
 
-func(m Member) Create(c *gin.Context){
 
-    if err := c.ShouldBindJSON(&m); err != nil {
+func(st Student) Create(c *gin.Context){
+
+    if err := c.ShouldBindJSON(&st); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-    m.PW = hashing.HashPassword(m.PW)
-    result := db.MariaDB.Create(&m)
+    st.PW = hashing.HashPassword(st.PW)
+    result := db.MariaDB.Create(&st)
 
     if result.Error != nil{
         c.JSON(http.StatusBadRequest, gin.H{"error":result.Error})
@@ -37,40 +36,40 @@ func(m Member) Create(c *gin.Context){
     }
 }
 
-func(m Member) Update(c *gin.Context){
+func(st Student) Update(c *gin.Context){
 
-    if err := c.ShouldBindJSON(&m); err != nil {
+    if err := c.ShouldBindJSON(&st); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"request error => ": err.Error()})
 		return
 	}
 
-    m.PW = hashing.HashPassword(m.PW)
-    result := db.MariaDB.Save(&m)
+    st.PW = hashing.HashPassword(st.PW)
+    result := db.MariaDB.Save(&st)
 
     if result.Error != nil{
         c.JSON(http.StatusBadRequest, gin.H{"database update error => ":result.Error})
     } else {
-        c.JSON(http.StatusOK, gin.H{"data": m})
+        c.JSON(http.StatusOK, gin.H{"data": st})
     }
 }
 
-func(m Member) Read(c *gin.Context){
+func(st Student) Read(c *gin.Context){
 
     id := c.Query("id")
-
-    result := db.MariaDB.First(&m, id)
+    result := db.MariaDB.First(&st, id)
 
     if result.Error != nil{
         c.JSON(http.StatusBadRequest, gin.H{"error":result.Error})
     } else {
-        c.JSON(http.StatusOK, gin.H{"data": m})
+        c.JSON(http.StatusOK, gin.H{"data": st})
     }
 
 }
 
+
 func All(c *gin.Context){
 
-    var data []Member
+    var data []Student
 
     result := db.MariaDB.Find(&data)
 
@@ -85,9 +84,9 @@ func All(c *gin.Context){
 }
 
 
-func FindOne(st Member)(Member, bool){
+func FindOne(st Student)(Student, bool){
 
-    reData := Member{}
+    reData := Student{}
 
     result := db.MariaDB.Where(&st).First(&reData)
 
@@ -96,6 +95,4 @@ func FindOne(st Member)(Member, bool){
     }else{
         return reData, false
     }
-
-
 }

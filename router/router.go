@@ -1,26 +1,33 @@
 package router
 
 import(
-    "GoApp/member"
+    "GoApp/student"
+    "GoApp/teacher"
     "GoApp/lesson"
     "GoApp/applyList"
     "GoApp/login"
     "GoApp/middleware"
     "github.com/gin-gonic/gin"
-
 )
 
 
 func SetupRouter() *gin.Engine {
 	router := gin.New()
 
-	memberRouter := router.Group("/member", middleware.CheckToken())
+	studentRouter := router.Group("/student", middleware.CheckToken())
 	{
-        memberRouter.GET("/", member.All)
-        memberRouter.GET("/:id", member.MemberInfo.Read)
-		memberRouter.PUT("/", member.MemberInfo.Update)
+        studentRouter.GET("/", student.All)
+        studentRouter.GET("/:id", student.StudentInfo.Read)
+		studentRouter.PUT("/", student.StudentInfo.Update)
 	}
 
+
+	teacherRouter := router.Group("/teacher", middleware.CheckToken())
+	{
+        teacherRouter.GET("/", teacher.All)
+        teacherRouter.GET("/:id", teacher.TeacherInfo.Read)
+		teacherRouter.PUT("/", teacher.TeacherInfo.Update)
+	}
 
 	lessonRouter := router.Group("/lesson", middleware.CheckToken())
 	{
@@ -41,12 +48,12 @@ func SetupRouter() *gin.Engine {
 	}
 
 
+    router.POST("/teacherRegister", teacher.TeacherInfo.Create)
+    router.POST("/register", student.StudentInfo.Create)
+//     router.GET("/login", login.LoginInfo.UnSignIn)
 
-    router.POST("/register", member.MemberInfo.Create)
-    router.GET("/login", login.LoginInfo.UnSignIn)
+    router.POST("/teacherLogin", login.LoginInfo.TeacherSignIn)
     router.POST("/login", login.LoginInfo.SignIn)
-
-
 
     return router
 }

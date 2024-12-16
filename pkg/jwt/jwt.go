@@ -2,7 +2,6 @@ package jwt
 
 import(
     "github.com/golang-jwt/jwt/v5"
-    "GoApp/member"
     "strconv"
     "time"
     "log"
@@ -10,7 +9,7 @@ import(
 
 
 type Claims struct {
-    mid string
+    id string
     jwt.RegisteredClaims
 }
 
@@ -19,9 +18,9 @@ const (
     secret string = "jaomoqhoi45frjih8r2q8"
 )
 
-func Build(data member.Member) (string, error){
+func Build(id int, account string) (string, error){
 
-    mid := strconv.Itoa(data.Id)
+    mid := strconv.Itoa(id)
 
     claims := Claims{
             mid,
@@ -30,7 +29,7 @@ func Build(data member.Member) (string, error){
                 IssuedAt:  jwt.NewNumericDate(time.Now()),
                 NotBefore: jwt.NewNumericDate(time.Now()),
                 Issuer: "GoApp",
-                Subject: data.Email,
+                Subject: account,
             },
         }
 

@@ -2,7 +2,7 @@ package lesson
 
 import(
     "github.com/gin-gonic/gin"
-    "GoApp/member"
+    "GoApp/teacher"
     "strconv"
     "net/http"
     db "GoApp/database"
@@ -12,8 +12,7 @@ type Lesson struct{
     Id int `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
     LessonName string `gorm:"column:lessonName" json:"lessonName"`
     LessonDescribe string `gorm:"column:lessonDescribe" json:"lessonDescribe"`
-    Mid string `gorm:"column:mid" json:"mid"`
-    Teacher string `gorm:"column:teacher;index" json:"teacher"`
+    Tid string `gorm:"column:tid" json:"tid"`
     LessonTime string `gorm:"column:lessonTime" json:"lessonTime"`
     LessonAddress string `gorm:"column:lessonAddress" json:"lessonAddress"`
     TuitionFee string `gorm:"column:tuitionFee" json:"tuitionFee"`
@@ -29,7 +28,7 @@ func(st Lesson) Create(c *gin.Context){
 		return
 	}
 
-    if checkResult := validMemberType(st.Mid); checkResult {
+    if checkResult := validMemberType(st.Tid); checkResult {
 
         result := db.MariaDB.Create(&st)
 
@@ -50,7 +49,7 @@ func(st Lesson) Update(c *gin.Context){
 		return
 	}
 
-    if checkResult := validMemberType(st.Mid); checkResult {
+    if checkResult := validMemberType(st.Tid); checkResult {
 
         result := db.MariaDB.Save(&st)
 
@@ -96,7 +95,7 @@ func(st Lesson) All(c *gin.Context){
 
 func validMemberType(id string)(bool){
 
-    mid, _ := strconv.Atoi(id)
-    data, status := member.FindOne(member.Member{Id: mid})
-    return status && data.MType == "school"
+    tid, _ := strconv.Atoi(id)
+    _, status := teacher.FindOne(teacher.Teacher{Id: tid})
+    return status
 }
