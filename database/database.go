@@ -6,3 +6,10 @@ import (
 
 var MariaDB *gorm.DB
 
+var Mongo MongoDB
+
+
+func init(){
+    mariaConnect()
+    Mongo.connect()
+}

@@ -8,7 +8,7 @@ import(
     "fmt"
 )
 
-func init(){
+func mariaConnect(){
 
     var err error
 
@@ -19,9 +19,9 @@ func init(){
 
     if err != nil {
         log.Printf("DB Failed : %v \n", err)
-        panic("database connection Failed")
+        panic("maria database connection Failed")
     }else{
-        log.Println("database connection Successful")
+        log.Println("maria database connection Successful")
     }
 }
 
