@@ -3,21 +3,64 @@ package middleware
 import(
     "github.com/gin-gonic/gin"
     "net/http"
-    "GoApp/pkg/jwt"
-    "strings"
+    "context"
+
+    db "GoApp/database"
+
+    "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/bson/primitive"
+
 )
 
-func CheckToken() gin.HandlerFunc {
-	return func(c *gin.Context) {
-        auth := c.GetHeader("Authorization")
-        token := strings.Split(auth, "Bearer ")
 
-        if len(token) > 1 && jwt.Verify(token[1]) {
-            c.Next()
-        }else{
-            c.JSON(http.StatusBadRequest, gin.H{"error": "JWT Verify Failed"})
+
+func CheckSLogin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+        var session_user = db.Mongo.Database.Collection("session_student")
+
+        cookie, err := c.Cookie("session_id")
+
+        if err != nil {
+          c.JSON(http.StatusBadRequest, gin.H{"error": "Please login again"})
+          c.Abort()
+        }
+
+        objID, _ := primitive.ObjectIDFromHex(cookie)
+        filter := bson.D{{"_id", objID}}
+
+        if count, _ := session_user.CountDocuments(context.TODO(), filter); count == 0 {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Please login again"})
             c.Abort()
         }
+
+        c.Next()
+
     }
 }
 
+
+func CheckTLogin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+        var session_user = db.Mongo.Database.Collection("session_teacher")
+
+        cookie, err := c.Cookie("session_id")
+
+        if err != nil {
+          c.JSON(http.StatusBadRequest, gin.H{"error": "Please login again s"})
+          c.Abort()
+        }
+
+        objID, _ := primitive.ObjectIDFromHex(cookie)
+        filter := bson.D{{"_id", objID}}
+
+        if count, _ := session_user.CountDocuments(context.TODO(), filter); count == 0 {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Please login again"})
+            c.Abort()
+        }
+
+        c.Next()
+
+    }
+}

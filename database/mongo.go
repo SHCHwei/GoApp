@@ -13,9 +13,8 @@ var (
 )
 
 type MongoDB struct{
-    Collection *mongo.Collection
+    Database *mongo.Database
     Client *mongo.Client
-    Ctx context.Context
 }
 
 func(m *MongoDB) connect() {
@@ -30,22 +29,12 @@ func(m *MongoDB) connect() {
         log.Println("mongo database connection Successful")
     }
 
-    m.Collection = m.Client.Database("Lesson").Collection("session")
-    m.Ctx = ctx
+    m.Database = m.Client.Database("Lesson")
 }
 
 
 func(m *MongoDB) disConnect(){
 
-    m.Client.Disconnect(m.Ctx)
+    m.Client.Disconnect(ctx)
     log.Println("disConnect func.")
 }
-
-
-// func GetObjId(obj ObjectID)(string){
-//
-//
-//
-//
-//     return idString
-// }
